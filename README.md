@@ -4,6 +4,14 @@ A production-grade retirement auto-saving API platform that converts daily expen
 
 ---
 
+## Demo Video
+
+A 5-minute walkthrough demonstrating all endpoints, official verification, and test execution:
+
+🎥 [Watch Demo](https://www.loom.com/share/d7fdffc584d646049c9b03be7d67fd50)
+
+---
+
 ## Table of Contents
 
 - [Quick Start](#quick-start)
@@ -23,15 +31,19 @@ A production-grade retirement auto-saving API platform that converts daily expen
 
 - Docker installed and running
 
-### Build
+### Option 1: Docker Hub — Just Run
 
 ```bash
-docker build --no-cache -t blk-hacking-ind-yashwant-gawande .
+docker pull yashng7/blk-hacking-ind-yashwant-gawande:latest
+docker run -p 5477:5477 yashng7/blk-hacking-ind-yashwant-gawande:latest
 ```
 
-### Run
+### Option 2: Source Code — Build and Explore
 
 ```bash
+git clone https://github.com/yashng7/blackrock-challenge.git
+cd blackrock-challenge
+docker build --no-cache -t blk-hacking-ind-yashwant-gawande .
 docker run -p 5477:5477 blk-hacking-ind-yashwant-gawande
 ```
 
@@ -53,6 +65,8 @@ Expected response:
 | Port | 5477 |
 | Base URL | http://localhost:5477 |
 | API Docs | http://localhost:5477/docs |
+| Docker Image | `yashng7/blk-hacking-ind-yashwant-gawande:latest` |
+| Source Code | `https://github.com/yashng7/blackrock-challenge` |
 
 ---
 
@@ -75,13 +89,26 @@ Full interactive documentation available at: **http://localhost:5477/docs**
 
 ## Testing
 
-### Run All Tests
+### Run Tests (Docker Hub)
 
 ```bash
+docker run --rm yashng7/blk-hacking-ind-yashwant-gawande:latest python -m pytest test/ -v
+```
+
+Results display directly in terminal. No source code needed.
+
+### Run Tests (From Source)
+
+```bash
+git clone https://github.com/yashng7/blackrock-challenge.git
+cd blackrock-challenge
+docker build --no-cache -t blk-hacking-ind-yashwant-gawande .
 docker run --rm blk-hacking-ind-yashwant-gawande python -m pytest test/ -v
 ```
 
-### Run Tests with HTML Report
+### Generate Test Reports (From Source Only)
+
+Test reports require source code cloned locally. The volume mount saves reports to your machine.
 
 **Windows (PowerShell):**
 ```powershell
@@ -98,9 +125,7 @@ docker run --rm -v "%cd%/test:/app/test" blk-hacking-ind-yashwant-gawande python
 docker run --rm -v "$(pwd)/test:/app/test" blk-hacking-ind-yashwant-gawande python -m pytest test/ -v
 ```
 
-### Test Reports
-
-After running tests with volume mount:
+Reports generated at:
 
 | Report | Location |
 |--------|----------|
@@ -111,12 +136,29 @@ After running tests with volume mount:
 
 ## Troubleshooting
 
-### Complete Clean Rebuild
-
-If you encounter any issues, perform a clean rebuild:
+### Clean Setup (Docker Hub)
 
 **Linux / macOS:**
 ```bash
+docker stop $(docker ps -q) 2>/dev/null
+docker rmi yashng7/blk-hacking-ind-yashwant-gawande:latest 2>/dev/null
+docker pull yashng7/blk-hacking-ind-yashwant-gawande:latest
+docker run -p 5477:5477 yashng7/blk-hacking-ind-yashwant-gawande:latest
+```
+
+**Windows (PowerShell):**
+```powershell
+docker stop $(docker ps -q) 2>$null
+docker rmi yashng7/blk-hacking-ind-yashwant-gawande:latest 2>$null
+docker pull yashng7/blk-hacking-ind-yashwant-gawande:latest
+docker run -p 5477:5477 yashng7/blk-hacking-ind-yashwant-gawande:latest
+```
+
+### Clean Rebuild (From Source)
+
+**Linux / macOS:**
+```bash
+cd blackrock-challenge
 docker stop $(docker ps -q) 2>/dev/null
 docker rmi blk-hacking-ind-yashwant-gawande 2>/dev/null
 docker build --no-cache -t blk-hacking-ind-yashwant-gawande .
@@ -125,6 +167,7 @@ docker run -p 5477:5477 blk-hacking-ind-yashwant-gawande
 
 **Windows (PowerShell):**
 ```powershell
+cd blackrock-challenge
 docker stop $(docker ps -q) 2>$null
 docker rmi blk-hacking-ind-yashwant-gawande 2>$null
 docker build --no-cache -t blk-hacking-ind-yashwant-gawande .
@@ -133,26 +176,16 @@ docker run -p 5477:5477 blk-hacking-ind-yashwant-gawande
 
 ### Port Conflict Resolution
 
-If port 5477 is already in use:
-
 ```bash
-# Stop all Docker containers
 docker stop $(docker ps -q)
-
-# Verify port is free
 netstat -ano | findstr :5477
 ```
 
 ### Container Diagnostics
 
 ```bash
-# View running containers
 docker ps
-
-# View container logs
 docker logs $(docker ps -q)
-
-# Verify service health
 curl http://localhost:5477/health
 ```
 
