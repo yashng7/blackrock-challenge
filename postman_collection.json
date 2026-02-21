@@ -1,0 +1,513 @@
+{
+  "info": {
+    "name": "BlackRock Retirement Engine",
+    "description": "Complete API test collection for retirement auto-saving platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5477"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Root",
+      "item": [
+        {
+          "name": "Root",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/"
+          }
+        },
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Parse",
+      "item": [
+        {
+          "name": "Parse - Basic",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:parse",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expenses\": [\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-16 14:00:00\", \"amount\": 200},\n    {\"date\": \"2024-01-17 09:15:00\", \"amount\": 175}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Parse - Small Amount",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:parse",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expenses\": [\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 0.50}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Parse - Exact Multiple of 100",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:parse",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expenses\": [\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 300}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Parse - Empty",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:parse",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expenses\": []\n}"
+            }
+          }
+        },
+        {
+          "name": "Parse - Official Verification",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:parse",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expenses\": [\n    {\"date\": \"2023-02-28 10:00:00\", \"amount\": 375},\n    {\"date\": \"2023-07-01 12:00:00\", \"amount\": 620},\n    {\"date\": \"2023-10-12 14:00:00\", \"amount\": 250},\n    {\"date\": \"2023-12-17 16:00:00\", \"amount\": 480}\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validator",
+      "item": [
+        {
+          "name": "Validator - All Valid",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:validator",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 300, \"remanent\": 50},\n    {\"date\": \"2024-01-16 14:00:00\", \"amount\": 200, \"ceiling\": 200, \"remanent\": 0}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Validator - Negative Amount",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:validator",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": -5, \"ceiling\": 100, \"remanent\": 105}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Validator - Wrong Ceiling",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:validator",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 999, \"remanent\": 749}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Validator - Duplicate Timestamp",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:validator",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 300, \"remanent\": 50},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 100, \"ceiling\": 100, \"remanent\": 0}\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Filter",
+      "item": [
+        {
+          "name": "Filter - Q Override",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:filter",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": [\n    {\"fixed\": 90, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100, \"ceiling\": 100, \"remanent\": 0},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 300, \"remanent\": 50},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150, \"ceiling\": 200, \"remanent\": 50}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Filter - P Addition",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:filter",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": [],\n  \"p\": [\n    {\"extra\": 25, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100, \"ceiling\": 100, \"remanent\": 0},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 300, \"remanent\": 50},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150, \"ceiling\": 200, \"remanent\": 50}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Filter - Q then P",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:filter",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": [\n    {\"fixed\": 90, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"p\": [\n    {\"extra\": 10, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100, \"ceiling\": 100, \"remanent\": 0},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 300, \"remanent\": 50},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150, \"ceiling\": 200, \"remanent\": 50}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Filter - Q Latest Start Wins",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:filter",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": [\n    {\"fixed\": 75, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"},\n    {\"fixed\": 90, \"start\": \"2024-01-10 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100, \"ceiling\": 100, \"remanent\": 0},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 300, \"remanent\": 50},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150, \"ceiling\": 200, \"remanent\": 50}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Filter - Multiple P Sum",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:filter",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": [],\n  \"p\": [\n    {\"extra\": 10, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"},\n    {\"extra\": 25, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100, \"ceiling\": 100, \"remanent\": 0},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 300, \"remanent\": 50},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150, \"ceiling\": 200, \"remanent\": 50}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Filter - inKPeriod Check",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/transactions:filter",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": [],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-10 00:00:00\", \"end\": \"2024-01-20 23:59:59\"}\n  ],\n  \"wage\": 50000,\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100, \"ceiling\": 100, \"remanent\": 0},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250, \"ceiling\": 300, \"remanent\": 50},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150, \"ceiling\": 200, \"remanent\": 50}\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Returns NPS",
+      "item": [
+        {
+          "name": "NPS - Basic",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:nps",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 30,\n  \"wage\": 100000,\n  \"inflation\": 6,\n  \"q\": [],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "NPS - With Q and P",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:nps",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 30,\n  \"wage\": 100000,\n  \"inflation\": 6,\n  \"q\": [\n    {\"fixed\": 90, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"p\": [\n    {\"extra\": 10, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "NPS - Age 60+",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:nps",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 65,\n  \"wage\": 100000,\n  \"inflation\": 6,\n  \"q\": [],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "NPS - Zero Inflation",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:nps",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 30,\n  \"wage\": 100000,\n  \"inflation\": 0,\n  \"q\": [],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "NPS - High Income Tax Benefit",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:nps",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 30,\n  \"wage\": 150000,\n  \"inflation\": 6,\n  \"q\": [],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "NPS - Official Verification",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:nps",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 29,\n  \"wage\": 50000,\n  \"inflation\": 5.5,\n  \"q\": [{\"fixed\": 0, \"start\": \"2023-07-01 00:00:00\", \"end\": \"2023-07-31 23:59:59\"}],\n  \"p\": [{\"extra\": 25, \"start\": \"2023-10-01 00:00:00\", \"end\": \"2023-12-31 23:59:59\"}],\n  \"k\": [\n    {\"start\": \"2023-03-01 00:00:00\", \"end\": \"2023-11-30 23:59:59\"},\n    {\"start\": \"2023-01-01 00:00:00\", \"end\": \"2023-12-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2023-02-28 10:00:00\", \"amount\": 375},\n    {\"date\": \"2023-07-01 12:00:00\", \"amount\": 620},\n    {\"date\": \"2023-10-12 14:00:00\", \"amount\": 250},\n    {\"date\": \"2023-12-17 16:00:00\", \"amount\": 480}\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Returns Index",
+      "item": [
+        {
+          "name": "Index - Basic",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:index",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 30,\n  \"wage\": 100000,\n  \"inflation\": 6,\n  \"q\": [],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Index - With Q and P",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:index",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 30,\n  \"wage\": 100000,\n  \"inflation\": 6,\n  \"q\": [\n    {\"fixed\": 90, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"p\": [\n    {\"extra\": 10, \"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Index - Age 60+",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:index",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 65,\n  \"wage\": 100000,\n  \"inflation\": 6,\n  \"q\": [],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Index - Multiple K Periods",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:index",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 30,\n  \"wage\": 100000,\n  \"inflation\": 6,\n  \"q\": [],\n  \"p\": [],\n  \"k\": [\n    {\"start\": \"2024-01-01 00:00:00\", \"end\": \"2024-01-15 23:59:59\"},\n    {\"start\": \"2024-01-10 00:00:00\", \"end\": \"2024-01-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2024-01-01 00:00:00\", \"amount\": 100},\n    {\"date\": \"2024-01-15 10:30:00\", \"amount\": 250},\n    {\"date\": \"2024-01-31 23:59:59\", \"amount\": 150}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Index - Official Verification",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/returns:index",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 29,\n  \"wage\": 50000,\n  \"inflation\": 5.5,\n  \"q\": [{\"fixed\": 0, \"start\": \"2023-07-01 00:00:00\", \"end\": \"2023-07-31 23:59:59\"}],\n  \"p\": [{\"extra\": 25, \"start\": \"2023-10-01 00:00:00\", \"end\": \"2023-12-31 23:59:59\"}],\n  \"k\": [\n    {\"start\": \"2023-03-01 00:00:00\", \"end\": \"2023-11-30 23:59:59\"},\n    {\"start\": \"2023-01-01 00:00:00\", \"end\": \"2023-12-31 23:59:59\"}\n  ],\n  \"transactions\": [\n    {\"date\": \"2023-02-28 10:00:00\", \"amount\": 375},\n    {\"date\": \"2023-07-01 12:00:00\", \"amount\": 620},\n    {\"date\": \"2023-10-12 14:00:00\", \"amount\": 250},\n    {\"date\": \"2023-12-17 16:00:00\", \"amount\": 480}\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Performance",
+      "item": [
+        {
+          "name": "Performance Metrics",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/blackrock/challenge/v1/performance"
+          }
+        }
+      ]
+    }
+  ]
+}
